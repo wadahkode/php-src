@@ -1,0 +1,18 @@
+{
+    "name": "wadahkode/wadahkode",
+    "description": "Library for fwid",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wadahkode",
+            "email": "mvp.dedefilaras@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+	    "psr-4": {
+		    "Wadahkode\\": "Wadahkode"
+	    }
+    }
+}
