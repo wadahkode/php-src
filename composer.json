@@ -2,6 +2,7 @@
   "name": "wadahkode/wadahkode",
   "description": "Library for fwid",
   "version": "0.0.1",
+  "minimum-stability": "dev",
   "type": "library",
   "license": "MIT",
   "authors": [
