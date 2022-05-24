@@ -1,0 +1,240 @@
+<?php
+namespace Wadahkode\Http;
+
+use Wadahkode\Http\Response;
+
+class Routes
+{
+  // public $any = [];
+  // private $app;
+  private $controllers = "WelcomeController";
+  private $method = "index";
+  private $params = [];
+  private $controllerNamespace = "App\\Http\\Controller";
+  // public $directive = [];
+  // private $dict;
+  // private $_GET = [];
+  // private $_POST = [];
+  // private $_FILES = [];
+  // public $server = [];
+  // public $request = [];
+  // private $supportedHttpMethods = [
+  //   'GET', 'POST', 'FILES', 'PUT', 'OPTIONS'
+  // ];
+//   private $pathname = [];
+  // private $response = [];
+  // private $urlToMatch = [];
+  public $foundation = null;
+
+  /**
+   * @var array $response = []
+   */
+  public $response = [];
+  
+  public function __construct(HttpFoundation $foundation, $request, ...$args)
+  {
+    $foundation->globalHttpMethods = $request;
+    $this->foundation = $foundation;
+    
+    list($name, $params) = $args;
+    
+    if (!in_array(strtoupper($name), $foundation->supportedHttpMethods)) {
+      return $foundation->invalidMethodHandler();
+    }
+
+    list($pathname, $controller) = $params;
+
+    $foundation->setUrlToMatch($request->requestUri);
+    $pathFormated = $foundation->parseURL();
+    $requestPath = $foundation->pathHandler($pathFormated);
+
+//    $this->{$name}[$requestPath] = $controller;
+//    $this->resolve($foundation->globalHttpMethods);
+//    
+//    return new Response($this);
+  }
+
+  /**
+   * Check method name and arguments
+   * 
+   * @param string $name = ""
+   * @param array $params = []
+   */
+  static public function __callStatic($name="", $params=[])
+  {
+    return new Self(new HttpFoundation, Request::fromGlobals(), $name, $params);
+//    return new Response($self->response);
+  }
+
+  public function getInstance()
+  {
+    if (file_exists(APP_ROUTE_DIR . 'web' . PHP_EXT)) {
+      file_get_contents(APP_ROUTE_DIR . 'web' . PHP_EXT);
+    }
+  }
+  
+  // public function __call(string $name="", array $param=[])
+  // {
+  //   if (count($param) < 2) return false;
+  //   $pathname = $param[0];
+  //   $func = $param[1];
+  //   // list($pathname, $func) = $param;
+    
+  //   if (!in_array(strtoupper($name), $this->supportedHttpMethods)) {
+  //     $this->invalidMethodHandler();
+  //   }
+  //   $pathFormated = $this->pathHandler($pathname);
+  //   $this->pathname = $pathFormated;
+  //   $this->{$name}[$pathFormated] = $func;
+  //   $this->response = $this->resolve();
+  // }
+
+  // static public function __callStatic($name, $arguments=[])
+  // {
+  //   $self = new Self($_SERVER['APP_REQUEST']);
+  //   if (!empty($name) && count($arguments) < 1) return false;
+  //   list($pathname, $func) = $arguments;
+
+  //   if (!in_array(strtoupper($name), $self->supportedHttpMethods)) {
+  //     return $self->invalidMethodHandler();
+  //   }
+  //   $pathFormated = $self->pathHandler($pathname);
+  //   $self->pathname = $pathFormated;
+
+  //   $self->{$name}[$pathFormated] = $func;
+  //   $self->urlToMatch[$self->parseURL()] = $self->parseURL();
+  //   $self->resolve();
+  // }
+  
+  // public function call($app)
+  // {
+  //   $this->app = $app;
+    
+  //   if (file_exists(APP_ROUTE_DIR . 'web.php')) {
+  //     require APP_ROUTE_DIR . 'web.php';
+  //   } else {
+  //     throw new \Exception('File '.APP_ROUTE_DIR . 'web.php'.' tidak dapat ditemukan!');
+  //   }
+
+  //   if (!is_array($this->response)) {
+  //     printf("router [%s] tidak dapat ditemukan!", $this->server->requestMethod);
+  //   }
+  // }
+  
+  // private function defaultRequestHandler()
+  // {
+  //   header("{$this->server->serverProtocol} 404 Not Found");
+  // }
+
+  private function generateController($path)
+  {
+    return [
+        "requestPath" => $path,
+        "controllers" => $this->controllers,
+        "method"      => $this->method,
+        "params"      => $this->params
+    ];
+    
+//    if ($this->response) {
+//      return call_user_func_array([$this->controllers, $this->method], [$this->params]);
+//    }
+//
+//    return $this;
+  }
+
+  // private function generateController()
+  // {
+  //   return call_user_func(function($callable){
+
+  //     list($class, $method) = $callable;
+  //     $controller = "App\\Http\\Controller\\{$class}Controller";
+
+  //     if (!file_exists(APP_CONTROLLER_DIR . "{$class}Controller" . PHP_EXT)) {
+  //       $this->defaultRequestHandler();
+
+  //       return view('errors/404', []);
+  //     }
+
+  //     return call_user_func([$controller, $method], $this->request);
+
+  //   }, explode("@", $this->controllerDict));
+  // }
+  
+  // private function invalidMethodHandler()
+  // {
+  //   header("{$this->server->serverProtocol} 405 Method Not Allowed");
+  // }
+  
+  // private function parseURL()
+  // {
+  //   $requestUri = $this->server->requestUri;
+
+  //   if (preg_match("/^\/([\w]+)(.*)/", $requestUri, $match)) {
+  //     // var_dump($match);
+  //     $requestUri = rtrim($match[0], DIRECTORY_SEPARATOR);
+  //   }
+
+  //   return filter_var($requestUri, FILTER_SANITIZE_URL);
+  // }
+  
+  // private function pathHandler(string $pathname="")
+  // {
+  //   $result = (rtrim($pathname, '/'));
+  //   return (($result !== '') ? $result : '/');
+  // }
+  
+  // public function require($module, ...$param)
+  // {
+  //   return $this->app->require($module, $param);
+  // }
+
+  public function resolve($request)
+  {
+    $propertyClass = $this->{strtolower($request->requestMethod)};
+    $pathname = $this->foundation->parseURL();
+    $dictionary = isset($propertyClass[$pathname]) ? $propertyClass[$pathname] : null;
+    
+    if (!empty($dictionary)) {
+      $dictionaryExplode = \preg_split("/@/", $dictionary);
+
+      list($controller, $method) = $dictionaryExplode;
+
+      $this->controllers = "{$this->controllerNamespace}\\{$controller}Controller";
+      $this->method = $method;
+      $this->params = $request;
+      
+      array_push($this->response, $this->generateController($pathname));
+      
+      return $this;
+    }
+    
+    return $dictionary;
+  }
+  
+  // private function resolve()
+  // {
+    // $pathname = $this->pathname;
+    // $pathFormated = "";
+    // $dictionary = $this->{strtolower($this->server->requestMethod)};
+    // if ($this->pathname === $this->parseURL() && $this->pathname === '/' && isset($mdict[$this->parseURL()])) {
+    //   if (gettype($mdict[$this->pathname]) === "string") {
+    //     $this->controllerDict = $mdict[$this->pathname];
+    //     $this->generateController();
+
+    //   } else {
+    //     echo $mdict[$this->pathname]($this);
+    //   }
+
+    // } else if ($this->pathname !== '/' && $this->pathname === $this->parseURL() && isset($mdict[$this->parseURL()])) {
+    //   if (gettype($mdict[$this->pathname]) === "string") {
+    //     $this->controllerDict = $mdict[$this->pathname];
+    //     $this->generateController();
+
+    //   } else {
+    //     echo $mdict[$this->pathname]($this);
+    //   }
+    // } else {
+    //   echo "tidak ada";
+    // }
+  // }
+}

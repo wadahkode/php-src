@@ -1,0 +1,9 @@
+@php
+namespace @namespace;
+
+use @use;
+
+class @class extends Model
+{
+  
+}
