@@ -31,7 +31,12 @@ class App extends Container
 	/**
 	 * @var string $sourcePath;
 	 */
-	protected $sourcePath = "";
+	// protected $sourcePath = "";
+
+	/**
+	 * @var string $configPath;
+	 */
+	protected $configPath = "";
 	
 	/**
 	 * @param string $rootPath
@@ -39,9 +44,9 @@ class App extends Container
 	public function __construct(String $rootPath = "")
 	{
 		$this->rootPath = realpath(rtrim(dirname($rootPath), '/\\')) . DIRECTORY_SEPARATOR;
-		$this->sourcePath = $this->rootPath . 'src' . DIRECTORY_SEPARATOR;
-		$this->setConfig('config.app');
-		$this->getConfig('app');
+		// $this->sourcePath = $this->rootPath . DIRECTORY_SEPARATOR;
+		// $this->setConfig('config.app');
+		// $this->getConfig('app');
 	}
 	
 	/**
@@ -50,8 +55,8 @@ class App extends Container
 	 */
 	public function createApp()
 	{
-		$this->saveVisitor();
-
+		$this->getConfig('app');
+		
 		return $this->terminate(Request::fromGlobals(), function($response){
 			$response->send();
 		});
@@ -99,7 +104,8 @@ class App extends Container
 		}
 		
 		array_map(function($fileHelper){
-			
+			defined('APP_HELPERS_DIR') OR define('APP_HELPERS_DIR', $this->rootPath . DIRECTORY_SEPARATOR . "Helpers" . DIRECTORY_SEPARATOR);
+
 			$fileHelper = APP_HELPERS_DIR . $fileHelper . $this->prefixHelper . FileExtension::get('php');
 			
 			return $this->includeFile($fileHelper);
@@ -191,40 +197,6 @@ class App extends Container
 
 		return false;
 	}
-
-	public function saveVisitor()
-	{
-		exec("wget -qO- http://ipecho.net/plain | xargs echo", $output);
-		$visitorFile = APP_STORE_DIR . 'visitor.json';
-		$date = date('Y-m-d h:i:s');
-		$visitor = [];
-
-		if (file_exists($visitorFile)) {
-			$visitor = json_decode(file_get_contents($visitorFile), true);
-		} else {
-			file_put_contents($visitorFile, json_encode([]));
-
-			return false;
-		}
-
-		array_push($visitor, [
-			"ip" => $output[0],
-			"userAgent" => $_SERVER["HTTP_USER_AGENT"],
-			"pathname" => $_SERVER["REQUEST_URI"],
-			"datetime" => $date
-		]);
-
-		preg_match("/^\/admin.*/", $_SERVER["REQUEST_URI"], $m);
-		preg_match("/^\/api.*/", $_SERVER["REQUEST_URI"], $m1);
-
-		if (!empty($m) && !empty($_COOKIE["user"])) {
-			return false;
-		} else if (!empty($m1)) {
-			return false;
-		}
-
-		file_put_contents($visitorFile, json_encode($visitor));
-	}
 	
 	/**
 	 * Settings config application
@@ -232,15 +204,15 @@ class App extends Container
 	 * @param string $name
 	 * 
 	 */
-	protected function setConfig(String $name)
+	public function setConfig(String $name)
 	{
-		$name = preg_split("/\./", $name);
-		list($path, $file) = $name;
-		if (!is_dir($this->sourcePath)) {
-			$this->rootPath = dirname($this->rootPath) . DIRECTORY_SEPARATOR;
-			$this->sourcePath = $this->rootPath . 'src' . DIRECTORY_SEPARATOR;
+		if (preg_match('/\./', $name)) {
+			$name = preg_split("/\./", $name);
+			list($path, $filename) = $name;
+			
+			$this->configPath = $this->rootPath . ucfirst($path) . DIRECTORY_SEPARATOR;
+			$this->config[$filename] = $this->configPath . $filename . FileExtension::get('php');
 		}
-		$this->config[$file] = $this->sourcePath . ucfirst($path) . DIRECTORY_SEPARATOR . $file . FileExtension::get('php');
 	}
 	
 	/**

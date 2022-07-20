@@ -1,1 +1,6 @@
 src/*/*.bak
+index.php
+composer.lock
+Config
+Routes
+vendor
