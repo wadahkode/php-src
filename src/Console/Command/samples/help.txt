@@ -1,4 +1,4 @@
-[32;mWadahkode versi v1.0.0[0m
+[32;mWadahkode versi v0.0.1[0m
 
 help:list	show this help
 make:controller make controller
