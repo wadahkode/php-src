@@ -24,6 +24,13 @@ class App extends Container
 	protected $prefixHelper = "_helper";
 
 	/**
+	 * @var string $pathHelper
+	 */
+	protected $pathHelper = "helpers";
+
+
+
+	/**
 	 * @var string $rootPath
 	 */
 	protected $rootPath = "";
@@ -54,9 +61,7 @@ class App extends Container
 	 * 
 	 */
 	public function createApp()
-	{
-		$this->getConfig('app');
-		
+	{	
 		return $this->terminate(Request::fromGlobals(), function($response){
 			$response->send();
 		});
@@ -104,9 +109,7 @@ class App extends Container
 		}
 		
 		array_map(function($fileHelper){
-			defined('APP_HELPERS_DIR') OR define('APP_HELPERS_DIR', $this->rootPath . DIRECTORY_SEPARATOR . "Helpers" . DIRECTORY_SEPARATOR);
-
-			$fileHelper = APP_HELPERS_DIR . $fileHelper . $this->prefixHelper . FileExtension::get('php');
+			$fileHelper = $this->rootPath . $this->pathHelper . DIRECTORY_SEPARATOR . $fileHelper . $this->prefixHelper . FileExtension::get('php');
 			
 			return $this->includeFile($fileHelper);
 			
@@ -210,9 +213,12 @@ class App extends Container
 			$name = preg_split("/\./", $name);
 			list($path, $filename) = $name;
 			
-			$this->configPath = $this->rootPath . ucfirst($path) . DIRECTORY_SEPARATOR;
+			$this->configPath = $this->rootPath . $path . DIRECTORY_SEPARATOR;
+			$this->configPath = !is_dir($this->configPath) ? dirname($this->rootPath) . $path . DIRECTORY_SEPARATOR : $this->configPath;
 			$this->config[$filename] = $this->configPath . $filename . FileExtension::get('php');
 		}
+
+		return $this->config;
 	}
 	
 	/**

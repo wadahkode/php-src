@@ -116,7 +116,6 @@ abstract class RouterFactory extends Route
     //     var_dump(isset($this->{$requestMethod}[$requestUri]));
     //     break;
     // }
-
     if (!class_exists($this->controllers)) {
       printf("<br>Kelas <b>[%s]</b> tidak dapat ditemukan.", $this->controllers);
 

@@ -1,6 +1,12 @@
-src/*/*.bak
-index.php
+app
+bootstrap
+config
 composer.lock
-Config
-Routes
+helpers
+routes
+src/*/*.bak
+storage
+templates
+public
 vendor
+wadahkode

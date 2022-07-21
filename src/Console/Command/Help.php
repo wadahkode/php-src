@@ -12,14 +12,15 @@ trait Help
     }
     
     if (file_exists($this->basepath . 'samples/help.txt')) {
-      $this->filename = $this->basepath . 'samples/help.txt';
+      $this->filename = $this->basepath . 'src/Console/Command/samples/help.txt';
     } else {
       $this->basepath = dirname(dirname($this->basepath)) . DIRECTORY_SEPARATOR;
       
-      if (file_exists($this->basepath . 'samples/help.txt')) {
-        $this->filename = $this->basepath . 'samples/help.txt';
+      if (file_exists($this->basepath . 'src/Console/Command/samples/help.txt')) {
+        $this->filename = $this->basepath . 'src/Console/Command/samples/help.txt';
       }
     }
+
     echo file_get_contents($this->filename) . "\n";
   }
 }
