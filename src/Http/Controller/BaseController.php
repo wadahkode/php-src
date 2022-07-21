@@ -17,7 +17,7 @@ abstract class BaseController
 
   protected function model(string $name="")
   {
-    require(dirname(__DIR__,2) . '/vendor/autoload.php');
+    // require(dirname(__DIR__,2) . '/vendor/autoload.php');
     
     foreach ($this->extensionsYaml as $ext) {
       if (file_exists($this->model_dir . $name . $ext)) {

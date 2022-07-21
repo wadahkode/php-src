@@ -4,6 +4,7 @@ namespace Wadahkode\Console\Command;
 trait Help
 {
   protected $filename = "";
+  protected $version = "0.0.1";
   
   public function show($list = "")
   {
@@ -21,6 +22,15 @@ trait Help
       }
     }
 
-    echo file_get_contents($this->filename) . "\n";
+    $version = file_get_contents($this->basepath . "composer.json");
+    preg_match("/version.*/", $version, $v);
+    preg_match('/\d.+/', $v[0], $verbose);
+    $version = trim($verbose[0], ",\"");
+    $this->version = $version;
+
+    $help = file_get_contents($this->filename);
+    $help = str_replace("@version", "v".$this->version, $help);
+
+    echo $help . "\n";
   }
 }

@@ -1,4 +1,5 @@
-[32;mWadahkode versi v0.0.1[0m
+[32;mWadahkode Console since version v0.0.1[0m
+version : @version
 
 help:list	show this help
 make:controller make controller
